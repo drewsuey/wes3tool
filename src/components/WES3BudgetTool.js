@@ -30,10 +30,10 @@ export default function WES3BudgetTool() {
         style={{ width: "100%", marginBottom: "8px", padding: "8px" }}
       >
         <option value="">Select Construction Type</option>
-        <option value="residential">Residential</option>
-        <option value="commercial">Commercial</option>
-        <option value="industrial">Industrial</option>
-        <option value="marine">Marine</option>
+        <option value="residential">Residential - Suitable for homes and small complexes</option>
+        <option value="commercial">Commercial - For offices, retail stores, and similar</option>
+        <option value="industrial">Industrial - Designed for warehouses and factories</option>
+        <option value="marine">Marine - Specialized for marine environments</option>
       </select>
       <select
         value={projectPhase}
@@ -41,27 +41,27 @@ export default function WES3BudgetTool() {
         style={{ width: "100%", marginBottom: "8px", padding: "8px" }}
       >
         <option value="">Select Project Phase</option>
-        <option value="early">Early Planning</option>
-        <option value="mid">Mid-Construction</option>
-        <option value="finishing">Finishing Phase</option>
+        <option value="early">Early Planning - Initial phase with basic layout</option>
+        <option value="mid">Mid-Construction - During construction with active work</option>
+        <option value="finishing">Finishing Phase - Near completion and detailing</option>
       </select>
       <input
         type="number"
-        placeholder="Enter site size (sq ft)"
+        placeholder="Enter site size (sq ft) - Total area of the site"
         value={siteSize}
         onChange={(e) => setSiteSize(e.target.value)}
         style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
       />
       <input
         type="number"
-        placeholder="Number of floors"
+        placeholder="Number of floors - Total levels in the building"
         value={floors}
         onChange={(e) => setFloors(e.target.value)}
         style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
       />
       <input
         type="number"
-        placeholder="Number of staircases"
+        placeholder="Number of staircases - Emergency and regular staircases"
         value={staircases}
         onChange={(e) => setStaircases(e.target.value)}
         style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
@@ -73,7 +73,7 @@ export default function WES3BudgetTool() {
             checked={interfaceIntegration}
             onChange={() => setInterfaceIntegration(!interfaceIntegration)}
           />
-          Interface Integration
+          Interface Integration - Allows connection with external systems
         </label>
         <label>
           <input
@@ -81,7 +81,7 @@ export default function WES3BudgetTool() {
             checked={reactIntegration}
             onChange={() => setReactIntegration(!reactIntegration)}
           />
-          REACT Integration (Provides real-time alerts and advanced monitoring)
+          REACT Integration - Provides real-time alerts and advanced monitoring
         </label>
       </div>
       <button
