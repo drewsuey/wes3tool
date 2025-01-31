@@ -45,27 +45,36 @@ export default function WES3BudgetTool() {
         <option value="mid">Mid-Construction - During construction with active work</option>
         <option value="finishing">Finishing Phase - Near completion and detailing</option>
       </select>
-      <input
-        type="number"
-        placeholder="Enter site size (sq ft) - Total area of the site"
-        value={siteSize}
-        onChange={(e) => setSiteSize(e.target.value)}
-        style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-      />
-      <input
-        type="number"
-        placeholder="Number of floors - Total levels in the building"
-        value={floors}
-        onChange={(e) => setFloors(e.target.value)}
-        style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-      />
-      <input
-        type="number"
-        placeholder="Number of staircases - Emergency and regular staircases"
-        value={staircases}
-        onChange={(e) => setStaircases(e.target.value)}
-        style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-      />
+      <label style={{ display: "block", marginBottom: "8px" }}>
+        Site Size (sq ft):
+        <input
+          type="number"
+          placeholder="Enter total site area in square feet"
+          value={siteSize}
+          onChange={(e) => setSiteSize(e.target.value)}
+          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
+        />
+      </label>
+      <label style={{ display: "block", marginBottom: "8px" }}>
+        Number of Floors:
+        <input
+          type="number"
+          placeholder="Enter the number of floors in the building"
+          value={floors}
+          onChange={(e) => setFloors(e.target.value)}
+          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
+        />
+      </label>
+      <label style={{ display: "block", marginBottom: "8px" }}>
+        Number of Staircases:
+        <input
+          type="number"
+          placeholder="Enter the number of staircases"
+          value={staircases}
+          onChange={(e) => setStaircases(e.target.value)}
+          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
+        />
+      </label>
       <div style={{ marginBottom: "16px" }}>
         <label style={{ marginRight: "8px" }}>
           <input
