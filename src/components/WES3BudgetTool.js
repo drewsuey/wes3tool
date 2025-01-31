@@ -1,123 +1,64 @@
 'use client';
 
 import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectItem } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Pie } from "react-chartjs-2";
 
-export default function WES3BudgetTool() {
-  const [siteSize, setSiteSize] = useState(0);
-  const [constructionType, setConstructionType] = useState("");
-  const [projectPhase, setProjectPhase] = useState("");
-  const [floors, setFloors] = useState(1);
-  const [staircases, setStaircases] = useState(1);
-  const [interfaceIntegration, setInterfaceIntegration] = useState(false);
-  const [reactIntegration, setReactIntegration] = useState(false);
-  const [deviceEstimate, setDeviceEstimate] = useState(null);
+const WES3BudgetTool = () => {
+  const [siteSize, setSiteSize] = useState(5000);
+  const [constructionType, setConstructionType] = useState("Commercial");
+  const [budget, setBudget] = useState(0);
 
-  const calculateEstimate = () => {
-    const callPoints = Math.ceil(siteSize / 5000) * floors;
-    const smokeDetectors = Math.ceil(siteSize / 1000) * floors;
-    const heatDetectors = Math.ceil(siteSize / 1500) * floors;
-    const totalDevices = callPoints + smokeDetectors + heatDetectors;
+  const handleEstimate = () => {
+    let estimatedBudget = siteSize * 0.15; // Example calculation
+    setBudget(estimatedBudget);
+  };
 
-    setDeviceEstimate({ callPoints, smokeDetectors, heatDetectors, totalDevices });
+  const budgetData = {
+    labels: ["Devices", "Installation", "Extras"],
+    datasets: [
+      {
+        data: [budget * 0.6, budget * 0.3, budget * 0.1],
+        backgroundColor: ["#F57C00", "#FFB74D", "#FFE0B2"],
+      },
+    ],
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-      <h2 style={{ fontSize: "24px", marginBottom: "16px" }}>WES3 Budget Estimator</h2>
-      <select
-        value={constructionType}
-        onChange={(e) => setConstructionType(e.target.value)}
-        style={{ width: "100%", marginBottom: "8px", padding: "8px" }}
-      >
-        <option value="">Select Construction Type</option>
-        <option value="residential">Residential - Suitable for homes and small complexes</option>
-        <option value="commercial">Commercial - For offices, retail stores, and similar</option>
-        <option value="industrial">Industrial - Designed for warehouses and factories</option>
-        <option value="marine">Marine - Specialized for marine environments</option>
-      </select>
-      <select
-        value={projectPhase}
-        onChange={(e) => setProjectPhase(e.target.value)}
-        style={{ width: "100%", marginBottom: "8px", padding: "8px" }}
-      >
-        <option value="">Select Project Phase</option>
-        <option value="early">Early Planning - Initial phase with basic layout</option>
-        <option value="mid">Mid-Construction - During construction with active work</option>
-        <option value="finishing">Finishing Phase - Near completion and detailing</option>
-      </select>
-      <label style={{ display: "block", marginBottom: "8px" }}>
-        Site Size (sq ft):
-        <input
-          type="number"
-          placeholder="Enter total site area in square feet"
-          value={siteSize}
-          onChange={(e) => setSiteSize(e.target.value)}
-          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-        />
-      </label>
-      <label style={{ display: "block", marginBottom: "8px" }}>
-        Number of Floors:
-        <input
-          type="number"
-          placeholder="Enter the number of floors in the building"
-          value={floors}
-          onChange={(e) => setFloors(e.target.value)}
-          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-        />
-      </label>
-      <label style={{ display: "block", marginBottom: "8px" }}>
-        Number of Staircases:
-        <input
-          type="number"
-          placeholder="Enter the number of staircases"
-          value={staircases}
-          onChange={(e) => setStaircases(e.target.value)}
-          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-        />
-      </label>
-      <div style={{ marginBottom: "16px" }}>
-        <label style={{ marginRight: "8px" }}>
-          <input
-            type="checkbox"
-            checked={interfaceIntegration}
-            onChange={() => setInterfaceIntegration(!interfaceIntegration)}
-          />
-          Interface Integration - Allows connection with external systems
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={reactIntegration}
-            onChange={() => setReactIntegration(!reactIntegration)}
-          />
-          REACT Integration - Provides real-time alerts and advanced monitoring
-        </label>
-      </div>
-      <button
-        onClick={calculateEstimate}
-        style={{
-          width: "100%",
-          padding: "12px",
-          backgroundColor: "#007BFF",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        Get Estimate
-      </button>
-      {deviceEstimate && (
-        <div style={{ marginTop: "20px", padding: "16px", backgroundColor: "#f9f9f9", borderRadius: "4px" }}>
-          <h3 style={{ fontSize: "20px" }}>Estimated Devices:</h3>
-          <p>Call Points: {deviceEstimate.callPoints}</p>
-          <p>Smoke Detectors: {deviceEstimate.smokeDetectors}</p>
-          <p>Heat Detectors: {deviceEstimate.heatDetectors}</p>
-          <p>Total Devices: {deviceEstimate.totalDevices}</p>
-          {interfaceIntegration && <p>Includes Interface Integration</p>}
-          {reactIntegration && <p>Includes REACT Integration (Real-time alerts and advanced monitoring)</p>}
-        </div>
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold text-orange-600">WES3 Budget Tool</h1>
+      
+      <Card className="mt-4">
+        <CardContent>
+          <label className="block font-semibold">Construction Type</label>
+          <Select value={constructionType} onChange={(e) => setConstructionType(e.target.value)}>
+            <SelectItem value="Commercial">Commercial</SelectItem>
+            <SelectItem value="Residential">Residential</SelectItem>
+            <SelectItem value="Industrial">Industrial</SelectItem>
+          </Select>
+
+          <label className="block font-semibold mt-4">Site Size (sq. ft)</label>
+          <Slider value={siteSize} min={1000} max={50000} step={1000} onChange={(val) => setSiteSize(val)} />
+          <Input type="number" value={siteSize} readOnly className="mt-2" />
+
+          <Button className="mt-4 bg-orange-600 text-white" onClick={handleEstimate}>Estimate Budget</Button>
+        </CardContent>
+      </Card>
+      
+      {budget > 0 && (
+        <Card className="mt-6">
+          <CardContent>
+            <h2 className="text-xl font-bold text-orange-600">Estimated Budget: ${budget.toFixed(2)}</h2>
+            <Pie data={budgetData} />
+          </CardContent>
+        </Card>
       )}
     </div>
   );
-}
+};
+
+export default WES3BudgetTool;
