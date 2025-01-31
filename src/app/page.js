@@ -2,7 +2,7 @@
 
 import WES3BudgetTool from "@/components/WES3BudgetTool";
 
-export default function WES3BudgetTool() {
+export default function Page() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-center mt-4">WES3 Budget Estimator</h1>
