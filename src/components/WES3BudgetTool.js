@@ -1,27 +1,27 @@
 'use client';
-
 import React, { useState } from "react";
 import { Pie } from "react-chartjs-2";
 
 const Card = ({ children, className }) => (
-  <div className={`bg-white rounded-lg shadow-md p-4 ${className}`}>{children}</div>
+  <div className={`bg-white rounded-lg shadow-md p-6 space-y-4 ${className}`}>{children}</div>
 );
 
 const Button = ({ children, onClick, className }) => (
   <button
-    className={`bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 ${className}`}
+    className={`bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 ${className}`}
     onClick={onClick}
   >
     {children}
   </button>
 );
 
-const Input = ({ type, value, readOnly, className }) => (
+const Input = ({ type, value, readOnly, className, onChange }) => (
   <input
     type={type}
     value={value}
     readOnly={readOnly}
-    className={`border rounded-md p-2 w-full ${className}`}
+    onChange={onChange}
+    className={`border rounded-md p-3 w-full text-gray-700 ${className}`}
   />
 );
 
@@ -29,7 +29,7 @@ const Select = ({ value, onChange, children }) => (
   <select
     value={value}
     onChange={onChange}
-    className="border rounded-md p-2 w-full"
+    className="border rounded-md p-3 w-full text-gray-700"
   >
     {children}
   </select>
@@ -47,7 +47,7 @@ const Slider = ({ value, min, max, step, onChange }) => (
     max={max}
     step={step}
     onChange={(e) => onChange(Number(e.target.value))}
-    className="w-full"
+    className="w-full mt-2"
   />
 );
 
@@ -79,62 +79,74 @@ const WES3BudgetTool = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold text-orange-600">WES3 Budget Tool</h1>
+    <div className="p-8 max-w-4xl mx-auto space-y-8 bg-gray-50">
+      <h1 className="text-4xl font-extrabold text-orange-600 text-center">WES3 Budget Tool</h1>
       
       <Card>
-        <div className="space-y-4">
-          <label className="block font-semibold">Construction Type</label>
-          <Select value={constructionType} onChange={(e) => setConstructionType(e.target.value)}>
-            <SelectItem value="Commercial">Commercial</SelectItem>
-            <SelectItem value="Residential">Residential</SelectItem>
-            <SelectItem value="Industrial">Industrial</SelectItem>
-          </Select>
-
-          <p className="text-sm text-gray-500">Select the type of construction site.</p>
-
-          <label className="block font-semibold">Project Phase</label>
-          <Select value={projectPhase} onChange={(e) => setProjectPhase(e.target.value)}>
-            <SelectItem value="Planning">Planning</SelectItem>
-            <SelectItem value="Mid-Construction">Mid-Construction</SelectItem>
-            <SelectItem value="Finishing">Finishing</SelectItem>
-          </Select>
-
-          <p className="text-sm text-gray-500">Choose the current phase of your project.</p>
-
-          <label className="block font-semibold">Number of Floors</label>
-          <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} />
-          <p className="text-sm text-gray-500">Enter the total number of floors in the site.</p>
-
-          <label className="block font-semibold">Number of Staircases</label>
-          <Input type="number" value={staircases} onChange={(e) => setStaircases(Number(e.target.value))} />
-          <p className="text-sm text-gray-500">Enter the number of staircases that require coverage.</p>
-
-          <label className="block font-semibold">Site Size (sq. ft)</label>
-          <Slider value={siteSize} min={1000} max={50000} step={1000} onChange={(val) => setSiteSize(val)} />
-          <Input type="number" value={siteSize} readOnly className="mt-2" />
-          <p className="text-sm text-gray-500">Adjust the slider to represent the site's total square footage.</p>
-
-          <label className="block font-semibold">Interface Integration</label>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={interfaceIntegration}
-              onChange={() => setInterfaceIntegration(!interfaceIntegration)}
-              className="mr-2"
-            />
-            <span>Include interface integration with third-party devices.</span>
+        <div className="space-y-6">
+          <div>
+            <label className="block font-semibold text-lg">Construction Type</label>
+            <Select value={constructionType} onChange={(e) => setConstructionType(e.target.value)}>
+              <SelectItem value="Commercial">Commercial</SelectItem>
+              <SelectItem value="Residential">Residential</SelectItem>
+              <SelectItem value="Industrial">Industrial</SelectItem>
+            </Select>
+            <p className="text-sm text-gray-500">Select the type of construction site.</p>
           </div>
 
-          <label className="block font-semibold">REACT Integration</label>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={reactIntegration}
-              onChange={() => setReactIntegration(!reactIntegration)}
-              className="mr-2"
-            />
-            <span>Enable REACT system integration for enhanced safety alerts.</span>
+          <div>
+            <label className="block font-semibold text-lg">Project Phase</label>
+            <Select value={projectPhase} onChange={(e) => setProjectPhase(e.target.value)}>
+              <SelectItem value="Planning">Planning</SelectItem>
+              <SelectItem value="Mid-Construction">Mid-Construction</SelectItem>
+              <SelectItem value="Finishing">Finishing</SelectItem>
+            </Select>
+            <p className="text-sm text-gray-500">Choose the current phase of your project.</p>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-lg">Number of Floors</label>
+            <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} />
+            <p className="text-sm text-gray-500">Enter the total number of floors in the site.</p>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-lg">Number of Staircases</label>
+            <Input type="number" value={staircases} onChange={(e) => setStaircases(Number(e.target.value))} />
+            <p className="text-sm text-gray-500">Enter the number of staircases that require coverage.</p>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-lg">Site Size (sq. ft)</label>
+            <Slider value={siteSize} min={1000} max={50000} step={1000} onChange={(val) => setSiteSize(val)} />
+            <Input type="number" value={siteSize} readOnly className="mt-2" />
+            <p className="text-sm text-gray-500">Adjust the slider to represent the site's total square footage.</p>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-lg">Interface Integration</label>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={interfaceIntegration}
+                onChange={() => setInterfaceIntegration(!interfaceIntegration)}
+                className="mr-2"
+              />
+              <span>Include interface integration for direct power devices.</span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-lg">REACT Integration</label>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                checked={reactIntegration}
+                onChange={() => setReactIntegration(!reactIntegration)}
+                className="mr-2"
+              />
+              <span>Enable REACT system integration for enhanced safety alerts.</span>
+            </div>
           </div>
 
           <Button className="mt-4" onClick={handleEstimate}>Estimate Budget</Button>
