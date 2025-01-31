@@ -8,7 +8,7 @@ const Card = ({ children, className }) => (
 
 const Button = ({ children, onClick, className }) => (
   <button
-    className={`bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 ${className}`}
+    className={`bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 ${className}`}
     onClick={onClick}
   >
     {children}
@@ -83,73 +83,73 @@ const WES3BudgetTool = () => {
       <h1 className="text-4xl font-extrabold text-orange-600 text-center">WES3 Budget Tool</h1>
       
       <Card>
-        <div className="space-y-6">
+        <div className="space-y-8">
           <div>
-            <label className="block font-semibold text-lg">Construction Type</label>
+            <label className="block font-semibold text-lg mb-2">Construction Type</label>
             <Select value={constructionType} onChange={(e) => setConstructionType(e.target.value)}>
               <SelectItem value="Commercial">Commercial</SelectItem>
               <SelectItem value="Residential">Residential</SelectItem>
               <SelectItem value="Industrial">Industrial</SelectItem>
             </Select>
-            <p className="text-sm text-gray-500">Select the type of construction site.</p>
+            <p className="text-sm text-gray-500 mt-1">Select the type of construction site.</p>
           </div>
 
           <div>
-            <label className="block font-semibold text-lg">Project Phase</label>
+            <label className="block font-semibold text-lg mb-2">Project Phase</label>
             <Select value={projectPhase} onChange={(e) => setProjectPhase(e.target.value)}>
               <SelectItem value="Planning">Planning</SelectItem>
               <SelectItem value="Mid-Construction">Mid-Construction</SelectItem>
               <SelectItem value="Finishing">Finishing</SelectItem>
             </Select>
-            <p className="text-sm text-gray-500">Choose the current phase of your project.</p>
+            <p className="text-sm text-gray-500 mt-1">Choose the current phase of your project.</p>
           </div>
 
           <div>
-            <label className="block font-semibold text-lg">Number of Floors</label>
+            <label className="block font-semibold text-lg mb-2">Number of Floors</label>
             <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} />
-            <p className="text-sm text-gray-500">Enter the total number of floors in the site.</p>
+            <p className="text-sm text-gray-500 mt-1">Enter the total number of floors in the site.</p>
           </div>
 
           <div>
-            <label className="block font-semibold text-lg">Number of Staircases</label>
+            <label className="block font-semibold text-lg mb-2">Number of Staircases</label>
             <Input type="number" value={staircases} onChange={(e) => setStaircases(Number(e.target.value))} />
-            <p className="text-sm text-gray-500">Enter the number of staircases that require coverage.</p>
+            <p className="text-sm text-gray-500 mt-1">Enter the number of staircases that require coverage.</p>
           </div>
 
           <div>
-            <label className="block font-semibold text-lg">Site Size (sq. ft)</label>
+            <label className="block font-semibold text-lg mb-2">Site Size (sq. ft)</label>
             <Slider value={siteSize} min={1000} max={50000} step={1000} onChange={(val) => setSiteSize(val)} />
-            <Input type="number" value={siteSize} readOnly className="mt-2" />
-            <p className="text-sm text-gray-500">Adjust the slider to represent the site's total square footage.</p>
+            <Input type="number" value={siteSize} readOnly className="mt-3" />
+            <p className="text-sm text-gray-500 mt-1">Adjust the slider to represent the site's total square footage.</p>
           </div>
 
           <div>
-            <label className="block font-semibold text-lg">Interface Integration</label>
-            <div className="flex items-center">
+            <label className="block font-semibold text-lg mb-2">Interface Integration</label>
+            <div className="flex items-center mt-1">
               <input
                 type="checkbox"
                 checked={interfaceIntegration}
                 onChange={() => setInterfaceIntegration(!interfaceIntegration)}
-                className="mr-2"
+                className="mr-3"
               />
               <span>Include interface integration for direct power devices.</span>
             </div>
           </div>
 
           <div>
-            <label className="block font-semibold text-lg">REACT Integration</label>
-            <div className="flex items-center">
+            <label className="block font-semibold text-lg mb-2">REACT Integration</label>
+            <div className="flex items-center mt-1">
               <input
                 type="checkbox"
                 checked={reactIntegration}
                 onChange={() => setReactIntegration(!reactIntegration)}
-                className="mr-2"
+                className="mr-3"
               />
               <span>Enable REACT system integration for enhanced safety alerts.</span>
             </div>
           </div>
 
-          <Button className="mt-4" onClick={handleEstimate}>Estimate Budget</Button>
+          <Button className="mt-6 w-full" onClick={handleEstimate}>Estimate Budget</Button>
         </div>
       </Card>
       
