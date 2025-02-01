@@ -1,3 +1,5 @@
+'use client';
+
 import WES3BudgetTool from "./WES3BudgetTool";
 
 export default function Home() {
