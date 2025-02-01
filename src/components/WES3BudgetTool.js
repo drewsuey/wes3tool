@@ -20,9 +20,8 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import jsPDF from "jspdf";
 
-// WES3 Theme with no toggle for dark mode
+// WES3 Theme
 const theme = createTheme({
   palette: {
     mode: "light",
@@ -64,22 +63,15 @@ export default function WES3BudgetTool() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Calculate Estimate
-  const calculateEstimate = () => {
-    const callPoints = Math.ceil(siteSize / 5000) * floors;
-    const smokeDetectors = Math.ceil(siteSize / 1000) * floors;
-    const heatDetectors = Math.ceil(siteSize / 1500) * floors;
-    const totalDevices = callPoints + smokeDetectors + heatDetectors;
-
-    setDeviceEstimate({ callPoints, smokeDetectors, heatDetectors, totalDevices });
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <Box
         sx={{
-          backgroundColor: "#FFFFFF", // Keep background white
-          minHeight: "100vh",
+          backgroundImage: `url('/logo.jpg')`, // Path to the logo in the public folder
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          minHeight: "100vh", // Ensure it covers the full height
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -90,7 +82,7 @@ export default function WES3BudgetTool() {
           sx={{
             maxWidth: 800,
             margin: "0 auto",
-            backgroundColor: "white",
+            backgroundColor: "white", // Keep the content card white
             padding: 4,
             borderRadius: 2,
             boxShadow: 3,
@@ -175,36 +167,13 @@ export default function WES3BudgetTool() {
             </Grid>
           )}
 
-          {activeStep > 0 && activeStep < steps.length && (
-            <Box>
-              {/* Step 2 (Integrations) */}
-              <Typography variant="h6" gutterBottom>
-                Select Additional Integrations:
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={interfaceIntegration}
-                    onChange={() => setInterfaceIntegration(!interfaceIntegration)}
-                  />
-                }
-                label="Interface Integration - Connect with third-party systems"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={reactIntegration}
-                    onChange={() => setReactIntegration(!reactIntegration)}
-                  />
-                }
-                label="REACT Integration - Real-time alerts and advanced monitoring"
-              />
-            </Box>
-          )}
-
           <Box sx={{ marginTop: 4 }}>
             {activeStep > 0 && (
-              <Button variant="contained" color="primary" onClick={() => setActiveStep(activeStep - 1)}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setActiveStep(activeStep - 1)}
+              >
                 Back
               </Button>
             )}
@@ -212,15 +181,13 @@ export default function WES3BudgetTool() {
               variant="contained"
               color="primary"
               onClick={() => {
-                if (activeStep === steps.length - 1) {
-                  calculateEstimate();
-                } else if (validateInputs()) {
+                if (validateInputs()) {
                   setActiveStep(activeStep + 1);
                 }
               }}
               sx={{ marginLeft: activeStep > 0 ? 2 : 0 }}
             >
-              {activeStep === steps.length - 1 ? "Get Estimate" : "Next"}
+              Next
             </Button>
           </Box>
         </Box>
