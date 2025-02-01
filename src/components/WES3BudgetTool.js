@@ -1,197 +1,190 @@
 'use client';
 
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Grid,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-  Checkbox,
-  FormControlLabel,
-  Tooltip,
-  IconButton,
-  Stepper,
-  Step,
-  StepLabel,
-  createTheme,
-  ThemeProvider,
-} from "@mui/material";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import { Pie } from "react-chartjs-2";
 
-// WES3 Theme
-const theme = createTheme({
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#F57C00",
-    },
-    background: {
-      default: "#FFFFFF",
-    },
-  },
-  typography: {
-    fontFamily: "Arial, sans-serif",
-  },
-});
+const Card = ({ children, className }) => (
+  <div className={`bg-white rounded-lg shadow-md p-6 space-y-4 ${className}`}>{children}</div>
+);
 
-export default function WES3BudgetTool() {
-  const [siteSize, setSiteSize] = useState(0);
-  const [constructionType, setConstructionType] = useState("");
-  const [projectPhase, setProjectPhase] = useState("");
+const Button = ({ children, onClick, className }) => (
+  <button
+    className={`bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 ${className}`}
+    onClick={onClick}
+  >
+    {children}
+  </button>
+);
+
+const Input = ({ type, value, readOnly, className, onChange }) => (
+  <input
+    type={type}
+    value={value}
+    readOnly={readOnly}
+    onChange={onChange}
+    className={`border rounded-md p-3 w-full text-gray-700 ${className}`}
+  />
+);
+
+const Select = ({ value, onChange, children }) => (
+  <select
+    value={value}
+    onChange={onChange}
+    className="border rounded-md p-3 w-full text-gray-700"
+  >
+    {children}
+  </select>
+);
+
+const SelectItem = ({ value, children }) => (
+  <option value={value}>{children}</option>
+);
+
+const Slider = ({ value, min, max, step, onChange }) => (
+  <input
+    type="range"
+    value={value}
+    min={min}
+    max={max}
+    step={step}
+    onChange={(e) => onChange(Number(e.target.value))}
+    className="w-full mt-2"
+  />
+);
+
+const WES3BudgetTool = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [siteSize, setSiteSize] = useState(5000);
+  const [constructionType, setConstructionType] = useState("Commercial");
+  const [projectPhase, setProjectPhase] = useState("Planning");
   const [floors, setFloors] = useState(1);
   const [staircases, setStaircases] = useState(1);
   const [interfaceIntegration, setInterfaceIntegration] = useState(false);
   const [reactIntegration, setReactIntegration] = useState(false);
-  const [deviceEstimate, setDeviceEstimate] = useState(null);
-  const [errors, setErrors] = useState({});
-  const [activeStep, setActiveStep] = useState(0);
+  const [budget, setBudget] = useState(0);
 
-  const steps = ["Enter Site Details", "Select Integrations", "Get Estimate"];
-
-  // Input Validation
-  const validateInputs = () => {
-    const newErrors = {};
-    if (siteSize <= 0) newErrors.siteSize = "Site size must be greater than 0.";
-    if (!constructionType) newErrors.constructionType = "Construction type is required.";
-    if (!projectPhase) newErrors.projectPhase = "Project phase is required.";
-    if (floors <= 0) newErrors.floors = "Number of floors must be greater than 0.";
-    if (staircases <= 0) newErrors.staircases = "Number of staircases must be greater than 0.";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleEstimate = () => {
+    let estimatedBudget = siteSize * 0.15 + floors * 500 + staircases * 300;
+    if (interfaceIntegration) estimatedBudget += 1000;
+    if (reactIntegration) estimatedBudget += 2000;
+    setBudget(estimatedBudget);
   };
 
+  const budgetData = {
+    labels: ["Devices", "Installation", "Extras"],
+    datasets: [
+      {
+        data: [budget * 0.6, budget * 0.3, budget * 0.1],
+        backgroundColor: ["#F57C00", "#FFB74D", "#FFE0B2"],
+      },
+    ],
+  };
+
+  const steps = [
+    {
+      title: "Enter Site Details",
+      content: (
+        <div className="space-y-8">
+          <div>
+            <label className="block font-semibold text-lg mb-2">Construction Type</label>
+            <Select value={constructionType} onChange={(e) => setConstructionType(e.target.value)}>
+              <SelectItem value="Commercial">Commercial</SelectItem>
+              <SelectItem value="Residential">Residential</SelectItem>
+              <SelectItem value="Industrial">Industrial</SelectItem>
+            </Select>
+          </div>
+          <div>
+            <label className="block font-semibold text-lg mb-2">Project Phase</label>
+            <Select value={projectPhase} onChange={(e) => setProjectPhase(e.target.value)}>
+              <SelectItem value="Planning">Planning</SelectItem>
+              <SelectItem value="Mid-Construction">Mid-Construction</SelectItem>
+              <SelectItem value="Finishing">Finishing</SelectItem>
+            </Select>
+          </div>
+          <div>
+            <label className="block font-semibold text-lg mb-2">Number of Floors</label>
+            <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} />
+          </div>
+          <div>
+            <label className="block font-semibold text-lg mb-2">Number of Staircases</label>
+            <Input type="number" value={staircases} onChange={(e) => setStaircases(Number(e.target.value))} />
+          </div>
+          <div>
+            <label className="block font-semibold text-lg mb-2">Site Size (sq. ft)</label>
+            <Slider value={siteSize} min={1000} max={50000} step={1000} onChange={(val) => setSiteSize(val)} />
+            <Input type="number" value={siteSize} readOnly className="mt-3" />
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Select Integrations",
+      content: (
+        <div className="space-y-8">
+          <div>
+            <label className="block font-semibold text-lg mb-2">Interface Integration</label>
+            <div className="flex items-center mt-1">
+              <input
+                type="checkbox"
+                checked={interfaceIntegration}
+                onChange={() => setInterfaceIntegration(!interfaceIntegration)}
+                className="mr-3"
+              />
+              <span>Include interface integration for direct power devices.</span>
+            </div>
+          </div>
+          <div>
+            <label className="block font-semibold text-lg mb-2">REACT Integration</label>
+            <div className="flex items-center mt-1">
+              <input
+                type="checkbox"
+                checked={reactIntegration}
+                onChange={() => setReactIntegration(!reactIntegration)}
+                className="mr-3"
+              />
+              <span>Enable REACT system integration for enhanced safety alerts.</span>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Get Estimate",
+      content: (
+        <div>
+          <h2 className="text-xl font-bold text-orange-600">Estimated Budget: ${budget.toFixed(2)}</h2>
+          <Pie data={budgetData} />
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          backgroundImage: `url('/logo.jpg')`, // Path to the logo in the public folder
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          minHeight: "100vh", // Ensure it covers the full height
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 4,
-        }}
-      >
-        <Box
-          sx={{
-            maxWidth: 800,
-            margin: "0 auto",
-            backgroundColor: "white", // Keep the content card white
-            padding: 4,
-            borderRadius: 2,
-            boxShadow: 3,
-          }}
-        >
-          <Typography variant="h5" color="primary" textAlign="center" gutterBottom>
-            WES3 Budget Estimator
-          </Typography>
+    <div className="p-8 max-w-4xl mx-auto space-y-8 bg-gray-50">
+      <h1 className="text-4xl font-extrabold text-orange-600 text-center">WES3 Budget Tool</h1>
 
-          <Stepper activeStep={activeStep} sx={{ marginBottom: 4 }}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-
-          {activeStep === 0 && (
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Typography variant="body1" gutterBottom>
-                  Select Construction Type:
-                  <Tooltip title="Choose the type of site you're building." arrow>
-                    <IconButton size="small" color="primary">
-                      <HelpOutlineIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </Typography>
-                <Select
-                  value={constructionType}
-                  onChange={(e) => setConstructionType(e.target.value)}
-                  fullWidth
-                  displayEmpty
-                  variant="outlined"
-                  error={!!errors.constructionType}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="residential">Residential</MenuItem>
-                  <MenuItem value="commercial">Commercial</MenuItem>
-                  <MenuItem value="industrial">Industrial</MenuItem>
-                  <MenuItem value="marine">Marine</MenuItem>
-                </Select>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Site Size (sq ft)"
-                  type="number"
-                  fullWidth
-                  variant="outlined"
-                  value={siteSize}
-                  onChange={(e) => setSiteSize(Number(e.target.value))}
-                  error={!!errors.siteSize}
-                  helperText={errors.siteSize}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Number of Floors"
-                  type="number"
-                  fullWidth
-                  variant="outlined"
-                  value={floors}
-                  onChange={(e) => setFloors(Number(e.target.value))}
-                  error={!!errors.floors}
-                  helperText={errors.floors}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Number of Staircases"
-                  type="number"
-                  fullWidth
-                  variant="outlined"
-                  value={staircases}
-                  onChange={(e) => setStaircases(Number(e.target.value))}
-                  error={!!errors.staircases}
-                  helperText={errors.staircases}
-                />
-              </Grid>
-            </Grid>
+      <Card>
+        <h2 className="text-lg font-semibold text-orange-600">{steps[activeStep].title}</h2>
+        {steps[activeStep].content}
+        <div className="flex justify-between mt-6">
+          {activeStep > 0 && (
+            <Button className="w-1/3" onClick={() => setActiveStep((prev) => prev - 1)}>
+              Back
+            </Button>
           )}
-
-          <Box sx={{ marginTop: 4 }}>
-            {activeStep > 0 && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setActiveStep(activeStep - 1)}
-              >
-                Back
-              </Button>
-            )}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                if (validateInputs()) {
-                  setActiveStep(activeStep + 1);
-                }
-              }}
-              sx={{ marginLeft: activeStep > 0 ? 2 : 0 }}
-            >
+          {activeStep < steps.length - 1 ? (
+            <Button className="w-1/3 ml-auto" onClick={() => setActiveStep((prev) => prev + 1)}>
               Next
             </Button>
-          </Box>
-        </Box>
-      </Box>
-    </ThemeProvider>
+          ) : (
+            <Button className="w-1/3 ml-auto" onClick={handleEstimate}>
+              Get Estimate
+            </Button>
+          )}
+        </div>
+      </Card>
+    </div>
   );
-}
+};
+
+export default WES3BudgetTool;
