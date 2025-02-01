@@ -53,7 +53,6 @@ const Slider = ({ value, min, max, step, onChange }) => (
 );
 
 const WES3BudgetTool = () => {
-  const [activeStep, setActiveStep] = useState(0);
   const [siteSize, setSiteSize] = useState(5000);
   const [constructionType, setConstructionType] = useState("Commercial");
   const [projectPhase, setProjectPhase] = useState("Planning");
@@ -80,10 +79,11 @@ const WES3BudgetTool = () => {
     ],
   };
 
-  const steps = [
-    {
-      title: "Enter Site Details",
-      content: (
+  return (
+    <div className="p-8 max-w-4xl mx-auto space-y-8 bg-gray-50">
+      <h1 className="text-4xl font-extrabold text-orange-600 text-center">WES3 Budget Tool</h1>
+      
+      <Card>
         <div className="space-y-8">
           <div>
             <label className="block font-semibold text-lg mb-2">Construction Type</label>
@@ -92,7 +92,9 @@ const WES3BudgetTool = () => {
               <SelectItem value="Residential">Residential</SelectItem>
               <SelectItem value="Industrial">Industrial</SelectItem>
             </Select>
+            <p className="text-sm text-gray-500 mt-1">Select the type of construction site.</p>
           </div>
+
           <div>
             <label className="block font-semibold text-lg mb-2">Project Phase</label>
             <Select value={projectPhase} onChange={(e) => setProjectPhase(e.target.value)}>
@@ -100,27 +102,28 @@ const WES3BudgetTool = () => {
               <SelectItem value="Mid-Construction">Mid-Construction</SelectItem>
               <SelectItem value="Finishing">Finishing</SelectItem>
             </Select>
+            <p className="text-sm text-gray-500 mt-1">Choose the current phase of your project.</p>
           </div>
+
           <div>
             <label className="block font-semibold text-lg mb-2">Number of Floors</label>
             <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} />
+            <p className="text-sm text-gray-500 mt-1">Enter the total number of floors in the site.</p>
           </div>
+
           <div>
             <label className="block font-semibold text-lg mb-2">Number of Staircases</label>
             <Input type="number" value={staircases} onChange={(e) => setStaircases(Number(e.target.value))} />
+            <p className="text-sm text-gray-500 mt-1">Enter the number of staircases that require coverage.</p>
           </div>
+
           <div>
             <label className="block font-semibold text-lg mb-2">Site Size (sq. ft)</label>
             <Slider value={siteSize} min={1000} max={50000} step={1000} onChange={(val) => setSiteSize(val)} />
             <Input type="number" value={siteSize} readOnly className="mt-3" />
+            <p className="text-sm text-gray-500 mt-1">Adjust the slider to represent the site's total square footage.</p>
           </div>
-        </div>
-      ),
-    },
-    {
-      title: "Select Integrations",
-      content: (
-        <div className="space-y-8">
+
           <div>
             <label className="block font-semibold text-lg mb-2">Interface Integration</label>
             <div className="flex items-center mt-1">
@@ -133,6 +136,7 @@ const WES3BudgetTool = () => {
               <span>Include interface integration for direct power devices.</span>
             </div>
           </div>
+
           <div>
             <label className="block font-semibold text-lg mb-2">REACT Integration</label>
             <div className="flex items-center mt-1">
@@ -145,44 +149,19 @@ const WES3BudgetTool = () => {
               <span>Enable REACT system integration for enhanced safety alerts.</span>
             </div>
           </div>
-        </div>
-      ),
-    },
-    {
-      title: "Get Estimate",
-      content: (
-        <div>
-          <h2 className="text-xl font-bold text-orange-600">Estimated Budget: ${budget.toFixed(2)}</h2>
-          <Pie data={budgetData} />
-        </div>
-      ),
-    },
-  ];
 
-  return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8 bg-gray-50">
-      <h1 className="text-4xl font-extrabold text-orange-600 text-center">WES3 Budget Tool</h1>
-
-      <Card>
-        <h2 className="text-lg font-semibold text-orange-600">{steps[activeStep].title}</h2>
-        {steps[activeStep].content}
-        <div className="flex justify-between mt-6">
-          {activeStep > 0 && (
-            <Button className="w-1/3" onClick={() => setActiveStep((prev) => prev - 1)}>
-              Back
-            </Button>
-          )}
-          {activeStep < steps.length - 1 ? (
-            <Button className="w-1/3 ml-auto" onClick={() => setActiveStep((prev) => prev + 1)}>
-              Next
-            </Button>
-          ) : (
-            <Button className="w-1/3 ml-auto" onClick={handleEstimate}>
-              Get Estimate
-            </Button>
-          )}
+          <Button className="mt-6 w-full" onClick={handleEstimate}>Estimate Budget</Button>
         </div>
       </Card>
+      
+      {budget > 0 && (
+        <Card>
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-orange-600">Estimated Budget: ${budget.toFixed(2)}</h2>
+            <Pie data={budgetData} />
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
