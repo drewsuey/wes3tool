@@ -69,6 +69,8 @@ export default function WES3BudgetTool() {
     if (siteSize <= 0) newErrors.siteSize = "Site size must be greater than 0.";
     if (!constructionType) newErrors.constructionType = "Construction type is required.";
     if (!projectPhase) newErrors.projectPhase = "Project phase is required.";
+    if (floors <= 0) newErrors.floors = "Number of floors must be greater than 0.";
+    if (staircases <= 0) newErrors.staircases = "Number of staircases must be greater than 0.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -83,71 +85,37 @@ export default function WES3BudgetTool() {
     setDeviceEstimate({ callPoints, smokeDetectors, heatDetectors, totalDevices });
   };
 
-  // PDF Export
-  const exportPDF = () => {
-    const doc = new jsPDF();
-    doc.text("WES3 Budget Estimate", 10, 10);
-    doc.text(`Call Points: ${deviceEstimate.callPoints}`, 10, 20);
-    doc.text(`Smoke Detectors: ${deviceEstimate.smokeDetectors}`, 10, 30);
-    doc.text(`Heat Detectors: ${deviceEstimate.heatDetectors}`, 10, 40);
-    doc.text(`Total Devices: ${deviceEstimate.totalDevices}`, 10, 50);
-    doc.save("budget-estimate.pdf");
-  };
-
-  // Shareable Link
-  const generateShareableLink = () => {
-    const queryParams = new URLSearchParams({
-      siteSize,
-      constructionType,
-      projectPhase,
-      floors,
-      staircases,
-      interfaceIntegration,
-      reactIntegration,
-    }).toString();
-    return `${window.location.origin}?${queryParams}`;
-  };
-
-  // Stepper Navigation
-  const handleNext = () => {
-    if (activeStep === 0 && validateInputs()) {
-      setActiveStep((prev) => prev + 1);
-    } else if (activeStep === 1) {
-      setActiveStep((prev) => prev + 1);
-      calculateEstimate();
-    }
-  };
-
-  const handleBack = () => setActiveStep((prev) => prev - 1);
-
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
       <Box
         sx={{
-          background: "linear-gradient(135deg, #F57C00 0%, #FFFFFF 100%)",
+          backgroundImage: `url('/logo.jpg')`,
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundColor: "#F57C00", // Use orange as fallback
           minHeight: "100vh",
-          padding: 4,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <Box sx={{ textAlign: "center", marginBottom: 4 }}>
-          <img src="/logo.jpg" alt="WES3 Logo" style={{ width: "100px", marginBottom: "8px" }} />
-          <Typography variant="h5" color="primary">
-            WES3 Budget Estimator
-          </Typography>
-          <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} color="primary" />
-        </Box>
-
         <Box
           sx={{
             maxWidth: 800,
             margin: "0 auto",
-            backgroundColor: "background.default",
+            backgroundColor: "white",
             padding: 4,
             borderRadius: 2,
             boxShadow: 3,
           }}
         >
-          <Stepper activeStep={activeStep}>
+          <Typography variant="h5" color="primary" textAlign="center" gutterBottom>
+            WES3 Budget Estimator
+          </Typography>
+          <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} color="primary" />
+
+          <Stepper activeStep={activeStep} sx={{ marginBottom: 4 }}>
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
@@ -183,8 +151,6 @@ export default function WES3BudgetTool() {
                   <MenuItem value="marine">Marine</MenuItem>
                 </Select>
               </Grid>
-
-              {/* Other Inputs */}
               <Grid item xs={12}>
                 <TextField
                   label="Site Size (sq ft)"
@@ -197,22 +163,53 @@ export default function WES3BudgetTool() {
                   helperText={errors.siteSize}
                 />
               </Grid>
-              {/* Add floors and staircases */}
+              <Grid item xs={12}>
+                <TextField
+                  label="Number of Floors"
+                  type="number"
+                  fullWidth
+                  variant="outlined"
+                  value={floors}
+                  onChange={(e) => setFloors(Number(e.target.value))}
+                  error={!!errors.floors}
+                  helperText={errors.floors}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Number of Staircases"
+                  type="number"
+                  fullWidth
+                  variant="outlined"
+                  value={staircases}
+                  onChange={(e) => setStaircases(Number(e.target.value))}
+                  error={!!errors.staircases}
+                  helperText={errors.staircases}
+                />
+              </Grid>
             </Grid>
           )}
 
-          {/* Step 2 & Step 3 */}
-          {activeStep === 2 && deviceEstimate && (
-            <Box>
-              <Typography>Call Points: {deviceEstimate.callPoints}</Typography>
-              <Button onClick={exportPDF}>Export as PDF</Button>
+          {activeStep > 0 && (
+            <Box sx={{ marginTop: 4 }}>
+              <Button variant="contained" color="primary" fullWidth onClick={() => setActiveStep(activeStep - 1)}>
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ marginTop: 2 }}
+                onClick={() => {
+                  if (validateInputs()) {
+                    activeStep === steps.length - 1 ? calculateEstimate() : setActiveStep(activeStep + 1);
+                  }
+                }}
+              >
+                {activeStep === steps.length - 1 ? "Get Estimate" : "Next"}
+              </Button>
             </Box>
           )}
-
-          <Box sx={{ marginTop: 4 }}>
-            {activeStep > 0 && <Button onClick={handleBack}>Back</Button>}
-            <Button onClick={handleNext}>Next</Button>
-          </Box>
         </Box>
       </Box>
     </ThemeProvider>
