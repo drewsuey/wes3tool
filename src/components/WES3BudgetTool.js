@@ -1,169 +1,201 @@
 'use client';
 
 import React, { useState } from "react";
-import { Pie } from "react-chartjs-2";
+import {
+  Box,
+  Button,
+  Grid,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
 
-const Card = ({ children, className }) => (
-  <div className={`bg-white rounded-lg shadow-md p-6 space-y-4 ${className}`}>{children}</div>
-);
+// Custom Material-UI theme with WES3 colors
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#F57C00", // WES3 orange
+    },
+    background: {
+      default: "#FFFFFF", // WES3 white
+    },
+  },
+  typography: {
+    fontFamily: "Arial, sans-serif",
+  },
+});
 
-const Button = ({ children, onClick, className }) => (
-  <button
-    className={`bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 ${className}`}
-    onClick={onClick}
-  >
-    {children}
-  </button>
-);
-
-const Input = ({ type, value, readOnly, className, onChange }) => (
-  <input
-    type={type}
-    value={value}
-    readOnly={readOnly}
-    onChange={onChange}
-    className={`border rounded-md p-3 w-full text-gray-700 ${className}`}
-  />
-);
-
-const Select = ({ value, onChange, children }) => (
-  <select
-    value={value}
-    onChange={onChange}
-    className="border rounded-md p-3 w-full text-gray-700"
-  >
-    {children}
-  </select>
-);
-
-const SelectItem = ({ value, children }) => (
-  <option value={value}>{children}</option>
-);
-
-const Slider = ({ value, min, max, step, onChange }) => (
-  <input
-    type="range"
-    value={value}
-    min={min}
-    max={max}
-    step={step}
-    onChange={(e) => onChange(Number(e.target.value))}
-    className="w-full mt-2"
-  />
-);
-
-const WES3BudgetTool = () => {
-  const [siteSize, setSiteSize] = useState(5000);
-  const [constructionType, setConstructionType] = useState("Commercial");
-  const [projectPhase, setProjectPhase] = useState("Planning");
+export default function WES3BudgetTool() {
+  const [siteSize, setSiteSize] = useState(0);
+  const [constructionType, setConstructionType] = useState("");
+  const [projectPhase, setProjectPhase] = useState("");
   const [floors, setFloors] = useState(1);
   const [staircases, setStaircases] = useState(1);
   const [interfaceIntegration, setInterfaceIntegration] = useState(false);
   const [reactIntegration, setReactIntegration] = useState(false);
-  const [budget, setBudget] = useState(0);
+  const [deviceEstimate, setDeviceEstimate] = useState(null);
 
-  const handleEstimate = () => {
-    let estimatedBudget = siteSize * 0.15 + floors * 500 + staircases * 300;
-    if (interfaceIntegration) estimatedBudget += 1000;
-    if (reactIntegration) estimatedBudget += 2000;
-    setBudget(estimatedBudget);
-  };
+  const calculateEstimate = () => {
+    const callPoints = Math.ceil(siteSize / 5000) * floors;
+    const smokeDetectors = Math.ceil(siteSize / 1000) * floors;
+    const heatDetectors = Math.ceil(siteSize / 1500) * floors;
+    const totalDevices = callPoints + smokeDetectors + heatDetectors;
 
-  const budgetData = {
-    labels: ["Devices", "Installation", "Extras"],
-    datasets: [
-      {
-        data: [budget * 0.6, budget * 0.3, budget * 0.1],
-        backgroundColor: ["#F57C00", "#FFB74D", "#FFE0B2"],
-      },
-    ],
+    setDeviceEstimate({ callPoints, smokeDetectors, heatDetectors, totalDevices });
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8 bg-gray-50">
-      <h1 className="text-4xl font-extrabold text-orange-600 text-center">WES3 Budget Tool</h1>
-      
-      <Card>
-        <div className="space-y-8">
-          <div>
-            <label className="block font-semibold text-lg mb-2">Construction Type</label>
-            <Select value={constructionType} onChange={(e) => setConstructionType(e.target.value)}>
-              <SelectItem value="Commercial">Commercial</SelectItem>
-              <SelectItem value="Residential">Residential</SelectItem>
-              <SelectItem value="Industrial">Industrial</SelectItem>
-            </Select>
-            <p className="text-sm text-gray-500 mt-1">Select the type of construction site.</p>
-          </div>
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          backgroundImage: `url('/logo.jpg')`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 4,
+        }}
+      >
+        <Box sx={{ maxWidth: 800, backgroundColor: "#FFFFFF", borderRadius: 2, boxShadow: 3, padding: 4 }}>
+          <Typography variant="h4" color="primary" textAlign="center" gutterBottom>
+            WES3 Budget Estimator
+          </Typography>
+          <Grid container spacing={2}>
+            {/* Construction Type */}
+            <Grid item xs={12}>
+              <Typography variant="body1" gutterBottom>
+                Select Construction Type:
+              </Typography>
+              <Select
+                value={constructionType}
+                onChange={(e) => setConstructionType(e.target.value)}
+                fullWidth
+                displayEmpty
+                variant="outlined"
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="residential">Residential</MenuItem>
+                <MenuItem value="commercial">Commercial</MenuItem>
+                <MenuItem value="industrial">Industrial</MenuItem>
+                <MenuItem value="marine">Marine</MenuItem>
+              </Select>
+            </Grid>
 
-          <div>
-            <label className="block font-semibold text-lg mb-2">Project Phase</label>
-            <Select value={projectPhase} onChange={(e) => setProjectPhase(e.target.value)}>
-              <SelectItem value="Planning">Planning</SelectItem>
-              <SelectItem value="Mid-Construction">Mid-Construction</SelectItem>
-              <SelectItem value="Finishing">Finishing</SelectItem>
-            </Select>
-            <p className="text-sm text-gray-500 mt-1">Choose the current phase of your project.</p>
-          </div>
+            {/* Project Phase */}
+            <Grid item xs={12}>
+              <Typography variant="body1" gutterBottom>
+                Select Project Phase:
+              </Typography>
+              <Select
+                value={projectPhase}
+                onChange={(e) => setProjectPhase(e.target.value)}
+                fullWidth
+                displayEmpty
+                variant="outlined"
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="early">Early Planning</MenuItem>
+                <MenuItem value="mid">Mid-Construction</MenuItem>
+                <MenuItem value="finishing">Finishing Phase</MenuItem>
+              </Select>
+            </Grid>
 
-          <div>
-            <label className="block font-semibold text-lg mb-2">Number of Floors</label>
-            <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} />
-            <p className="text-sm text-gray-500 mt-1">Enter the total number of floors in the site.</p>
-          </div>
-
-          <div>
-            <label className="block font-semibold text-lg mb-2">Number of Staircases</label>
-            <Input type="number" value={staircases} onChange={(e) => setStaircases(Number(e.target.value))} />
-            <p className="text-sm text-gray-500 mt-1">Enter the number of staircases that require coverage.</p>
-          </div>
-
-          <div>
-            <label className="block font-semibold text-lg mb-2">Site Size (sq. ft)</label>
-            <Slider value={siteSize} min={1000} max={50000} step={1000} onChange={(val) => setSiteSize(val)} />
-            <Input type="number" value={siteSize} readOnly className="mt-3" />
-            <p className="text-sm text-gray-500 mt-1">Adjust the slider to represent the site's total square footage.</p>
-          </div>
-
-          <div>
-            <label className="block font-semibold text-lg mb-2">Interface Integration</label>
-            <div className="flex items-center mt-1">
-              <input
-                type="checkbox"
-                checked={interfaceIntegration}
-                onChange={() => setInterfaceIntegration(!interfaceIntegration)}
-                className="mr-3"
+            {/* Site Size */}
+            <Grid item xs={12}>
+              <TextField
+                label="Site Size (sq ft)"
+                type="number"
+                fullWidth
+                variant="outlined"
+                value={siteSize}
+                onChange={(e) => setSiteSize(Number(e.target.value))}
               />
-              <span>Include interface integration for direct power devices.</span>
-            </div>
-          </div>
+            </Grid>
 
-          <div>
-            <label className="block font-semibold text-lg mb-2">REACT Integration</label>
-            <div className="flex items-center mt-1">
-              <input
-                type="checkbox"
-                checked={reactIntegration}
-                onChange={() => setReactIntegration(!reactIntegration)}
-                className="mr-3"
+            {/* Number of Floors */}
+            <Grid item xs={12}>
+              <TextField
+                label="Number of Floors"
+                type="number"
+                fullWidth
+                variant="outlined"
+                value={floors}
+                onChange={(e) => setFloors(Number(e.target.value))}
               />
-              <span>Enable REACT system integration for enhanced safety alerts.</span>
-            </div>
-          </div>
+            </Grid>
 
-          <Button className="mt-6 w-full" onClick={handleEstimate}>Estimate Budget</Button>
-        </div>
-      </Card>
-      
-      {budget > 0 && (
-        <Card>
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-orange-600">Estimated Budget: ${budget.toFixed(2)}</h2>
-            <Pie data={budgetData} />
-          </div>
-        </Card>
-      )}
-    </div>
+            {/* Number of Staircases */}
+            <Grid item xs={12}>
+              <TextField
+                label="Number of Staircases"
+                type="number"
+                fullWidth
+                variant="outlined"
+                value={staircases}
+                onChange={(e) => setStaircases(Number(e.target.value))}
+              />
+            </Grid>
+
+            {/* Checkbox Options */}
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={interfaceIntegration}
+                    onChange={() => setInterfaceIntegration(!interfaceIntegration)}
+                    color="primary"
+                  />
+                }
+                label="Interface Integration - Allows connection with external systems"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={reactIntegration}
+                    onChange={() => setReactIntegration(!reactIntegration)}
+                    color="primary"
+                  />
+                }
+                label="REACT Integration - Provides real-time alerts and advanced monitoring"
+              />
+            </Grid>
+
+            {/* Submit Button */}
+            <Grid item xs={12}>
+              <Button variant="contained" color="primary" fullWidth onClick={calculateEstimate}>
+                Get Estimate
+              </Button>
+            </Grid>
+          </Grid>
+
+          {/* Results */}
+          {deviceEstimate && (
+            <Box sx={{ marginTop: 4, padding: 2, backgroundColor: "#F5F5F5", borderRadius: 2 }}>
+              <Typography variant="h5" gutterBottom>
+                Estimated Devices:
+              </Typography>
+              <Typography>Call Points: {deviceEstimate.callPoints}</Typography>
+              <Typography>Smoke Detectors: {deviceEstimate.smokeDetectors}</Typography>
+              <Typography>Heat Detectors: {deviceEstimate.heatDetectors}</Typography>
+              <Typography>Total Devices: {deviceEstimate.totalDevices}</Typography>
+              {interfaceIntegration && <Typography>Includes Interface Integration</Typography>}
+              {reactIntegration && <Typography>Includes REACT Integration</Typography>}
+            </Box>
+          )}
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
-};
-
-export default WES3BudgetTool;
+}
