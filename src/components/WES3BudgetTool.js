@@ -18,13 +18,12 @@ import {
   StepLabel,
   createTheme,
   ThemeProvider,
-  Switch,
 } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import jsPDF from "jspdf";
 
-// WES3 Theme
-const lightTheme = createTheme({
+// WES3 Theme with no toggle for dark mode
+const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
@@ -39,15 +38,6 @@ const lightTheme = createTheme({
   },
 });
 
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-    primary: {
-      main: "#F57C00",
-    },
-  },
-});
-
 export default function WES3BudgetTool() {
   const [siteSize, setSiteSize] = useState(0);
   const [constructionType, setConstructionType] = useState("");
@@ -58,7 +48,6 @@ export default function WES3BudgetTool() {
   const [reactIntegration, setReactIntegration] = useState(false);
   const [deviceEstimate, setDeviceEstimate] = useState(null);
   const [errors, setErrors] = useState({});
-  const [darkMode, setDarkMode] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
 
   const steps = ["Enter Site Details", "Select Integrations", "Get Estimate"];
@@ -86,18 +75,15 @@ export default function WES3BudgetTool() {
   };
 
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+    <ThemeProvider theme={theme}>
       <Box
         sx={{
-          backgroundImage: `url('/logo.jpg')`,
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-          backgroundColor: "#F57C00", // Use orange as fallback
+          backgroundColor: "#FFFFFF", // Keep background white
           minHeight: "100vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          padding: 4,
         }}
       >
         <Box
@@ -113,7 +99,6 @@ export default function WES3BudgetTool() {
           <Typography variant="h5" color="primary" textAlign="center" gutterBottom>
             WES3 Budget Estimator
           </Typography>
-          <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} color="primary" />
 
           <Stepper activeStep={activeStep} sx={{ marginBottom: 4 }}>
             {steps.map((label) => (
@@ -190,26 +175,54 @@ export default function WES3BudgetTool() {
             </Grid>
           )}
 
-          {activeStep > 0 && (
-            <Box sx={{ marginTop: 4 }}>
-              <Button variant="contained" color="primary" fullWidth onClick={() => setActiveStep(activeStep - 1)}>
-                Back
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ marginTop: 2 }}
-                onClick={() => {
-                  if (validateInputs()) {
-                    activeStep === steps.length - 1 ? calculateEstimate() : setActiveStep(activeStep + 1);
-                  }
-                }}
-              >
-                {activeStep === steps.length - 1 ? "Get Estimate" : "Next"}
-              </Button>
+          {activeStep > 0 && activeStep < steps.length && (
+            <Box>
+              {/* Step 2 (Integrations) */}
+              <Typography variant="h6" gutterBottom>
+                Select Additional Integrations:
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={interfaceIntegration}
+                    onChange={() => setInterfaceIntegration(!interfaceIntegration)}
+                  />
+                }
+                label="Interface Integration - Connect with third-party systems"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={reactIntegration}
+                    onChange={() => setReactIntegration(!reactIntegration)}
+                  />
+                }
+                label="REACT Integration - Real-time alerts and advanced monitoring"
+              />
             </Box>
           )}
+
+          <Box sx={{ marginTop: 4 }}>
+            {activeStep > 0 && (
+              <Button variant="contained" color="primary" onClick={() => setActiveStep(activeStep - 1)}>
+                Back
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                if (activeStep === steps.length - 1) {
+                  calculateEstimate();
+                } else if (validateInputs()) {
+                  setActiveStep(activeStep + 1);
+                }
+              }}
+              sx={{ marginLeft: activeStep > 0 ? 2 : 0 }}
+            >
+              {activeStep === steps.length - 1 ? "Get Estimate" : "Next"}
+            </Button>
+          </Box>
         </Box>
       </Box>
     </ThemeProvider>
