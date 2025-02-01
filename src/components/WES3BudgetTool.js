@@ -1,6 +1,34 @@
 'use client';
 
 import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Grid,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
+
+// Custom Material-UI theme with WES3 colors
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#F57C00", // WES3 orange
+    },
+    background: {
+      default: "#FFFFFF", // WES3 white
+    },
+  },
+  typography: {
+    fontFamily: "Arial, sans-serif",
+  },
+});
 
 export default function WES3BudgetTool() {
   const [siteSize, setSiteSize] = useState(0);
@@ -22,102 +50,138 @@ export default function WES3BudgetTool() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-      <h2 style={{ fontSize: "24px", marginBottom: "16px" }}>WES3 Budget Estimator</h2>
-      <select
-        value={constructionType}
-        onChange={(e) => setConstructionType(e.target.value)}
-        style={{ width: "100%", marginBottom: "8px", padding: "8px" }}
-      >
-        <option value="">Select Construction Type</option>
-        <option value="residential">Residential - Suitable for homes and small complexes</option>
-        <option value="commercial">Commercial - For offices, retail stores, and similar</option>
-        <option value="industrial">Industrial - Designed for warehouses and factories</option>
-        <option value="marine">Marine - Specialized for marine environments</option>
-      </select>
-      <select
-        value={projectPhase}
-        onChange={(e) => setProjectPhase(e.target.value)}
-        style={{ width: "100%", marginBottom: "8px", padding: "8px" }}
-      >
-        <option value="">Select Project Phase</option>
-        <option value="early">Early Planning - Initial phase with basic layout</option>
-        <option value="mid">Mid-Construction - During construction with active work</option>
-        <option value="finishing">Finishing Phase - Near completion and detailing</option>
-      </select>
-      <label style={{ display: "block", marginBottom: "8px" }}>
-        Site Size (sq ft):
-        <input
-          type="number"
-          placeholder="Enter total site area in square feet"
-          value={siteSize}
-          onChange={(e) => setSiteSize(e.target.value)}
-          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-        />
-      </label>
-      <label style={{ display: "block", marginBottom: "8px" }}>
-        Number of Floors:
-        <input
-          type="number"
-          placeholder="Enter the number of floors in the building"
-          value={floors}
-          onChange={(e) => setFloors(e.target.value)}
-          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-        />
-      </label>
-      <label style={{ display: "block", marginBottom: "8px" }}>
-        Number of Staircases:
-        <input
-          type="number"
-          placeholder="Enter the number of staircases"
-          value={staircases}
-          onChange={(e) => setStaircases(e.target.value)}
-          style={{ width: "100%", marginBottom: "16px", padding: "8px" }}
-        />
-      </label>
-      <div style={{ marginBottom: "16px" }}>
-        <label style={{ marginRight: "8px" }}>
-          <input
-            type="checkbox"
-            checked={interfaceIntegration}
-            onChange={() => setInterfaceIntegration(!interfaceIntegration)}
-          />
-          Interface Integration - Allows connection with external systems
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={reactIntegration}
-            onChange={() => setReactIntegration(!reactIntegration)}
-          />
-          REACT Integration - Provides real-time alerts and advanced monitoring
-        </label>
-      </div>
-      <button
-        onClick={calculateEstimate}
-        style={{
-          width: "100%",
-          padding: "12px",
-          backgroundColor: "#007BFF",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        Get Estimate
-      </button>
-      {deviceEstimate && (
-        <div style={{ marginTop: "20px", padding: "16px", backgroundColor: "#f9f9f9", borderRadius: "4px" }}>
-          <h3 style={{ fontSize: "20px" }}>Estimated Devices:</h3>
-          <p>Call Points: {deviceEstimate.callPoints}</p>
-          <p>Smoke Detectors: {deviceEstimate.smokeDetectors}</p>
-          <p>Heat Detectors: {deviceEstimate.heatDetectors}</p>
-          <p>Total Devices: {deviceEstimate.totalDevices}</p>
-          {interfaceIntegration && <p>Includes Interface Integration</p>}
-          {reactIntegration && <p>Includes REACT Integration (Real-time alerts and advanced monitoring)</p>}
-        </div>
-      )}
-    </div>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ padding: 4, maxWidth: 800, margin: "0 auto", backgroundColor: "#FFFFFF", borderRadius: 2, boxShadow: 2 }}>
+        <Typography variant="h4" color="primary" textAlign="center" gutterBottom>
+          WES3 Budget Estimator
+        </Typography>
+        <Grid container spacing={2}>
+          {/* Construction Type */}
+          <Grid item xs={12}>
+            <Typography variant="body1" gutterBottom>
+              Select Construction Type:
+            </Typography>
+            <Select
+              value={constructionType}
+              onChange={(e) => setConstructionType(e.target.value)}
+              fullWidth
+              displayEmpty
+              variant="outlined"
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value="residential">Residential</MenuItem>
+              <MenuItem value="commercial">Commercial</MenuItem>
+              <MenuItem value="industrial">Industrial</MenuItem>
+              <MenuItem value="marine">Marine</MenuItem>
+            </Select>
+          </Grid>
+
+          {/* Project Phase */}
+          <Grid item xs={12}>
+            <Typography variant="body1" gutterBottom>
+              Select Project Phase:
+            </Typography>
+            <Select
+              value={projectPhase}
+              onChange={(e) => setProjectPhase(e.target.value)}
+              fullWidth
+              displayEmpty
+              variant="outlined"
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value="early">Early Planning</MenuItem>
+              <MenuItem value="mid">Mid-Construction</MenuItem>
+              <MenuItem value="finishing">Finishing Phase</MenuItem>
+            </Select>
+          </Grid>
+
+          {/* Site Size */}
+          <Grid item xs={12}>
+            <TextField
+              label="Site Size (sq ft)"
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={siteSize}
+              onChange={(e) => setSiteSize(Number(e.target.value))}
+            />
+          </Grid>
+
+          {/* Number of Floors */}
+          <Grid item xs={12}>
+            <TextField
+              label="Number of Floors"
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={floors}
+              onChange={(e) => setFloors(Number(e.target.value))}
+            />
+          </Grid>
+
+          {/* Number of Staircases */}
+          <Grid item xs={12}>
+            <TextField
+              label="Number of Staircases"
+              type="number"
+              fullWidth
+              variant="outlined"
+              value={staircases}
+              onChange={(e) => setStaircases(Number(e.target.value))}
+            />
+          </Grid>
+
+          {/* Checkbox Options */}
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={interfaceIntegration}
+                  onChange={() => setInterfaceIntegration(!interfaceIntegration)}
+                  color="primary"
+                />
+              }
+              label="Interface Integration - Allows connection with external systems"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={reactIntegration}
+                  onChange={() => setReactIntegration(!reactIntegration)}
+                  color="primary"
+                />
+              }
+              label="REACT Integration - Provides real-time alerts and advanced monitoring"
+            />
+          </Grid>
+
+          {/* Submit Button */}
+          <Grid item xs={12}>
+            <Button variant="contained" color="primary" fullWidth onClick={calculateEstimate}>
+              Get Estimate
+            </Button>
+          </Grid>
+        </Grid>
+
+        {/* Results */}
+        {deviceEstimate && (
+          <Box sx={{ marginTop: 4, padding: 2, backgroundColor: "#F5F5F5", borderRadius: 2 }}>
+            <Typography variant="h5" gutterBottom>
+              Estimated Devices:
+            </Typography>
+            <Typography>Call Points: {deviceEstimate.callPoints}</Typography>
+            <Typography>Smoke Detectors: {deviceEstimate.smokeDetectors}</Typography>
+            <Typography>Heat Detectors: {deviceEstimate.heatDetectors}</Typography>
+            <Typography>Total Devices: {deviceEstimate.totalDevices}</Typography>
+            {interfaceIntegration && <Typography>Includes Interface Integration</Typography>}
+            {reactIntegration && <Typography>Includes REACT Integration</Typography>}
+          </Box>
+        )}
+      </Box>
+    </ThemeProvider>
   );
 }
